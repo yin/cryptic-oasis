@@ -7,7 +7,7 @@ var list_options = {
 	orderBy: 'updatedAt DESC'
 }
 
-function sequelize_rest(type) {
+function sequelize_rest(sequelize, type) {
 	var router = express.Router();
 
 	function create(req, res) {
@@ -51,4 +51,4 @@ function sequelize_rest(type) {
 	return router;
 }
 
-exports = { sequelize_rest }
+module.exports = { sequelize_rest: sequelize_rest }
