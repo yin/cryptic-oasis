@@ -1,5 +1,8 @@
 var express = require('express');
 var bodyparser = require('body-parser')
+var rest = require('modules/rest')
+var models = require('modules/models')
+
 var app = express();
 
 var web = express.Router();
@@ -20,9 +23,11 @@ web.get('/', function(request, response) {
   response.render('pages/index');
 });
 
-rest.get('/income', function(request, response) {
+rest.get('/hello', function(request, response) {
   response.json({ message: "Hello world!" });
 });
+
+rest.get('/income', rest.sequelize(models.Income));
 
 app.use('/', web);
 app.use('/api', rest);

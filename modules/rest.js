@@ -1,35 +1,54 @@
 var express = require('express');
 
+var create_options = {
+}
+var list_options = {
+	limit: 20,
+	orderBy: 'updatedAt DESC'
+}
 
-function psqlREST(psqlClient, table) {
+function sequelize_rest(type) {
 	var router = express.Router();
 
-	function create(psql) {
+	function create(req, res) {
 		var results = [];
-		var query = psqlClient.query('SELECT * FROM $1 WHERE user=$2', [table, null]);
-		query.on('row', function(row) {
-			results.push(row);
-		})
-		query.on('end', function() {
-			done();
-			return res.json(results);
-		})
+		var options = _.clone(create_options);
+		_.extend(options, req.options || {});
+
+		type.upsert(req.body).then(function() {
+
+		}).catch(function(error) {
+			// TODO yin: Add error mapping, for i18n and general UX and other RESTful funcs, like 404
+			return res.json({ success: false, error: error.message });
+		});
 	}
 
-	function list(psql) {
+	function list(req, res) {
 		var results = [];
-		var query = psqlClient.query('SELECT * FROM $1 WHERE user=$2', [table, null]);
-		query.on('row', function(row) {
-			results.push(row);
-		})
-		query.on('end', function() {
-			done();
+		var options = _.clone(list_options);
+		_.extend(options, req.options || {});
+
+		type.findAll(options).then(function(results) {
 			return res.json(results);
-		})
+		});
 	}
 
+	function count(req, res) {
+		type.count().then(function(result) {
+			res.json({ count: result });
+		});
+	}
+
+	function paggination(req, res, next, page) {
+		req.options || req.options = {};
+		req.options.offset = req.page * list_options.limit;
+		next();
+	}
+
+	router.param('count', count);
+	router.param('page', pagination);
 	router.get('/', list);
 	return router;
 }
 
-exports = {psqlREST}
+exports = { sequelize_rest }

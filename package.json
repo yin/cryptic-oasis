@@ -9,6 +9,7 @@
     "karma": "^0.12.16",
     "karma-chrome-launcher": "^0.1.4",
     "karma-jasmine": "~0.1.0"
+    "sequelize-cli": "^2.4.0"
   },
   "engines": {
     "node": "5.9.1"
@@ -27,8 +28,8 @@
     "ejs": "2.4.1",
     "express": "4.13.3",
     "pg": "^6.0.3",
+    "pg-hstore": "^2.3.2",
     "sequelize": "^3.23.6",
-    "sequelize-cli": "^2.4.0"
   },
   "repository": {
     "type": "git",
