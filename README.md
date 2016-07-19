@@ -1,8 +1,11 @@
-# node-js-getting-started
+# Cryptic Oasis - Web finance manager
 
-A barebones Node.js app using [Express 4](http://expressjs.com/).
+Cryptic oasis is income/expense management tool. The goal of this project is to learn technologies, I never :
 
-This application supports the [Getting Started with Node on Heroku](https://devcenter.heroku.com/articles/getting-started-with-nodejs) article - check it out.
+1. Advanced Heroku Toolbelt commands
+2. PostgreSQL
+3. EJS templating framework (already replaced by DoneJS)
+4. Express version 4
 
 ## Running Locally
 
@@ -33,7 +36,5 @@ or
 For more information about using Node.js on Heroku, see these Dev Center articles:
 
 - [Getting Started with Node.js on Heroku](https://devcenter.heroku.com/articles/getting-started-with-nodejs)
-- [Heroku Node.js Support](https://devcenter.heroku.com/articles/nodejs-support)
-- [Node.js on Heroku](https://devcenter.heroku.com/categories/nodejs)
+- [AngularJS 1.5 tutorial](https://code.angularjs.org/1.5.7/docs/tutorial) 
 - [Best Practices for Node.js Development](https://devcenter.heroku.com/articles/node-best-practices)
-- [Using WebSockets on Heroku with Node.js](https://devcenter.heroku.com/articles/node-websockets)

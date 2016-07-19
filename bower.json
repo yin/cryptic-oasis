@@ -1,0 +1,15 @@
+{
+  "name": "cryptic-oasis",
+  "description": "A web-based finance manager",
+  "version": "0.0.1",
+  "homepage": "https://yin.github.io/cryptic-oasis",
+  "license": "MIT",
+  "private": true,
+  "dependencies": {
+    "angular": "1.4.x",
+    "angular-mocks": "1.4.x",
+    "jquery": "~2.1.1",
+    "bootstrap": "~3.1.1",
+    "angular-resource": "1.4.x"
+  }
+}

@@ -1,26 +1,35 @@
 {
-  "name": "node-js-getting-started",
-  "version": "0.2.5",
-  "description": "A sample Node.js app using Express 4",
+  "name": "cryptic-oasis",
+  "version": "0.0.1",
+  "description": "A web finance manager",
+  "private": true,
+  "license": "MIT",
+  "devDependecies": {
+    "bower": "^1.7.9",
+    "karma": "^0.12.16",
+    "karma-chrome-launcher": "^0.1.4",
+    "karma-jasmine": "~0.1.0"
+  },
   "engines": {
     "node": "5.9.1"
   },
   "main": "index.js",
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "prestart": "npm install",
+    "postinstall": "bower install",
+    "test": "node node_modules/karma/bin/karma start test/karma.conf.js",
+    "pretest": "npm install",
+    "test-single-run": "node node_modules/karma/bin/karma start test/karma.conf.js  --single-run"
   },
   "dependencies": {
     "ejs": "2.4.1",
-    "express": "4.13.3"
+    "express": "4.13.3",
+    "pg": "^6.0.3"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/heroku/node-js-getting-started"
+    "url": "https://github.com/yin/cryptic-oasis.git"
   },
-  "keywords": [
-    "node",
-    "heroku",
-    "express"
-  ],
-  "license": "MIT"
+  "keywords": ["finance", "income", "expenses"]
 }
