@@ -9,6 +9,10 @@ var list_options = {
 	orderBy: 'updatedAt DESC'
 }
 
+function handle_error(error) {
+	// TODO yin: Add error mapping, for i18n and general UX and other RESTful funcs, like 404
+	return res.json({ success: false, error: error.message });
+}
 
 module.exports = function(sequelize, type) {
 	var router = express.Router();
@@ -25,47 +29,44 @@ module.exports = function(sequelize, type) {
 
 		type.build(req.body, options).save().then(function(completed) {
 			return res.json({ success: true, result: completed });
-		}).error(function(error) {
-			// TODO yin: Add error mapping, for i18n and general UX and other RESTful funcs, like 404
-			return res.json({ success: false, error: error.message });
-		});
+		}).error(handle_error);
 	}
 
 	function list(req, res) {
 		var results = [];
 		var options = _.clone(list_options);
+
 		_.extend(options, req.options || {});
+		options.offset = (options.page - 1) * options.limit;
 
 		type.findAll(options).then(function(results) {
-			return res.json({
-				success: true,
-				page: options.page,
-				pageSize: options.limit,
-				result: results
+			type.count().then(function(count) {
+				return res.json({
+					success: true,
+					page: options.page,
+					pageSize: options.limit,
+					total: Math.ceil(count / options.limit),
+					result: results
+				});
 			});
-		}).catch(function(error) {
-			// TODO yin: Add error mapping, for i18n and general UX and other RESTful funcs, like 404
-			return res.json({ success: false, error: error.message });
-		});
+		}).catch(handle_error);
 	}
 
 	function count(req, res, next) {
 		if (req.query && req.query.count) {
 			type.count().then(function(result) {
-				res.json({ count: result });
+				return res.json({ success: true, count: result });
 			});
+		} else {
+			next();
 		}
-		next();
 	}
 
 	function pagination(req, res, next) {
 		if (req.query && req.query.page) {
 			req.options = req.options || {};
-			req.options.page = Number(req.query.page) - 1;
-			req.options.offset = req.options.page * list_options.limit;
-		console.log('helloa', typeof(req.query.page), req.query.page);
+			req.options.page = Number(req.query.page);
 		}
-		console.log('hello', typeof(req.query.page), req.query.page);
 		next();
 	}
 
