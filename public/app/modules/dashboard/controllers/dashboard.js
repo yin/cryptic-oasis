@@ -8,13 +8,23 @@
 
  ===========================================================*/
 
-dashboard.controller("HomeController", ['$rootScope', '$scope', '$state', '$location', 'dashboardService', 'Flash',
-function ($rootScope, $scope, $state, $location, dashboardService, Flash) {
+dashboard.controller("HomeController",
+  ['$rootScope', '$scope', '$state', '$location', 'apiService', 'dashboardService', 'Flash',
+function ($rootScope, $scope, $state, $location, apiService, dashboardService, Flash) {
     var vm = this;
 
     vm.showDetails = true;
     vm.home = {};
-    
+
+    apiService.get('income').then(function(value) {
+      vm.home.charts = [
+        {
+          data: value,
+          title: "Past income",
+          options: {}
+        }
+      ]
+    });
     vm.home.mainData = [
         {
             title: "Projects",

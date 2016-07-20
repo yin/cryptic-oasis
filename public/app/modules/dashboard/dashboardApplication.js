@@ -9,7 +9,7 @@
 
  ===========================================================*/
 
-var dashboard = angular.module('dashboard', ['ui.router', 'ngAnimate','ngMaterial']);
+var dashboard = angular.module('dashboard', ['ui.router', 'ngAnimate', 'ngMaterial']);
 
 
 dashboard.config(["$stateProvider", function ($stateProvider) {
@@ -17,7 +17,7 @@ dashboard.config(["$stateProvider", function ($stateProvider) {
     //dashboard home page state
     $stateProvider.state('app.dashboard', {
         url: '/dashboard',
-        templateUrl: 'app/modules/dashboard/views/home.html',
+        templateUrl: 'app/modules/dashboard/views/dashboard.html',
         controller: 'HomeController',
         controllerAs: 'vm',
         data: {
