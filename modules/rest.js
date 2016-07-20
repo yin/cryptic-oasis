@@ -1,13 +1,16 @@
 var express = require('express');
+var _ = require('underscore');
 
 var create_options = {
 }
 var list_options = {
 	limit: 20,
+	page: 1,
 	orderBy: 'updatedAt DESC'
 }
 
-function sequelize_rest(sequelize, type) {
+
+module.exports = function(sequelize, type) {
 	var router = express.Router();
 
 	function create(req, res) {
@@ -15,9 +18,14 @@ function sequelize_rest(sequelize, type) {
 		var options = _.clone(create_options);
 		_.extend(options, req.options || {});
 
-		type.upsert(req.body).then(function() {
+		console.log(typeof(req.body), req.body);
+		for ( var i in req.body) {
+			console.log(i, req.body[i]);
+		}
 
-		}).catch(function(error) {
+		type.build(req.body, options).save().then(function(completed) {
+			return res.json({ success: true, result: completed });
+		}).error(function(error) {
 			// TODO yin: Add error mapping, for i18n and general UX and other RESTful funcs, like 404
 			return res.json({ success: false, error: error.message });
 		});
@@ -29,26 +37,41 @@ function sequelize_rest(sequelize, type) {
 		_.extend(options, req.options || {});
 
 		type.findAll(options).then(function(results) {
-			return res.json(results);
+			return res.json({
+				success: true,
+				page: options.page,
+				pageSize: options.limit,
+				result: results
+			});
+		}).catch(function(error) {
+			// TODO yin: Add error mapping, for i18n and general UX and other RESTful funcs, like 404
+			return res.json({ success: false, error: error.message });
 		});
 	}
 
-	function count(req, res) {
-		type.count().then(function(result) {
-			res.json({ count: result });
-		});
-	}
-
-	function paggination(req, res, next, page) {
-		req.options || req.options = {};
-		req.options.offset = req.page * list_options.limit;
+	function count(req, res, next) {
+		if (req.query && req.query.count) {
+			type.count().then(function(result) {
+				res.json({ count: result });
+			});
+		}
 		next();
 	}
 
-	router.param('count', count);
-	router.param('page', pagination);
+	function pagination(req, res, next) {
+		if (req.query && req.query.page) {
+			req.options = req.options || {};
+			req.options.page = Number(req.query.page) - 1;
+			req.options.offset = req.options.page * list_options.limit;
+		console.log('helloa', typeof(req.query.page), req.query.page);
+		}
+		console.log('hello', typeof(req.query.page), req.query.page);
+		next();
+	}
+
+	router.use(count);
+	router.use(pagination);
 	router.get('/', list);
+	router.post('/', create);
 	return router;
 }
-
-module.exports = { sequelize_rest: sequelize_rest }

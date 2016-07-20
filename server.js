@@ -1,14 +1,14 @@
 var express = require('express');
 var bodyparser = require('body-parser')
 var orm = require('./modules/orm')
-var income_model = require('./modules/models/income');
 var rest = require('./modules/rest')
 
-console.log(orm, income_model, process.env.DATABASE_URL);
-
 var app = express();
-var sequelize = orm(process.env.DATABASE_URL || "");
-var income = income_model(sequlize);
+var sequelize = orm(process.env.DATABASE_URL);
+var Income = sequelize.import(__dirname + '/modules/models/income');
+var income_rest = rest(sequelize, Income)
+
+console.log(income_rest);
 
 var web = express.Router();
 var rest = express.Router();
@@ -32,7 +32,7 @@ rest.get('/hello', function(request, response) {
   response.json({ message: "Hello world!" });
 });
 
-rest.use('/income', rest.sequelize(orm, models.Income));
+rest.use('/income', income_rest);
 
 app.use('/', web);
 app.use('/api', rest);

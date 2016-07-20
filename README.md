@@ -12,8 +12,9 @@ Cryptic oasis is income/expense management tool. The goal of this project is to 
 Make sure you have [Node.js](http://nodejs.org/) and the [Heroku Toolbelt](https://toolbelt.heroku.com/) installed.
 
 ```sh
-$ git clone git@github.com:heroku/node-js-getting-started.git # or clone your own fork
-$ cd node-js-getting-started
+$ git clone git@github.com:yin/cryptic-oasis.git # or clone your own fork
+$ cd cryptic-oasis
+$ sudo apt-get install -y libpg-dev
 $ npm install
 $ npm start
 ```

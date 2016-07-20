@@ -1,9 +1,15 @@
-module.exports = function(sequelize) {
-	return sequelize.define('income', {
+var Sequelize = require('sequelize');
+
+module.exports = function(sequelize, dataTypes) {
+	var model = sequelize.define('income', {
 		amount: {
 			// TODO yin: there are currencies, which use 4 decimal points 
-			type: sequelize.DECIMAL(12, 2)
+			type: dataTypes.DECIMAL(12, 2)
 		},
 		// TODO yin: Implement portfolio table and reference it
 	})
+	model.findById(0).catch(function(err) {
+		model.sync();
+	})
+	return model;
 }
