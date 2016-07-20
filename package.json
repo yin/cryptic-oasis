@@ -18,7 +18,7 @@
   "scripts": {
     "start": "node server.js",
     "prestart": "npm install",
-    "postinstall": "bower install",
+    "postinstall": "sudo apt-get install libpq-dev; npm install -g bower && bower install",
     "test": "node node_modules/karma/bin/karma start test/karma.conf.js",
     "pretest": "npm install",
     "test-single-run": "node node_modules/karma/bin/karma start test/karma.conf.js  --single-run"
