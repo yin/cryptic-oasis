@@ -18,13 +18,14 @@
   "scripts": {
     "start": "node server.js",
     "prestart": "npm install",
-    "postinstall": "sudo apt-get install libpq-dev; npm install -g bower && bower install",
+    "postinstall": "bower install",
     "test": "node node_modules/karma/bin/karma start test/karma.conf.js",
     "pretest": "npm install",
     "test-single-run": "node node_modules/karma/bin/karma start test/karma.conf.js  --single-run"
   },
   "dependencies": {
     "body-parser": "^1.15.2",
+    "chart.js": "^2.1.0",
     "ejs": "2.4.1",
     "express": "4.13.3",
     "pg": "^6.0.3",

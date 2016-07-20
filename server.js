@@ -1,7 +1,7 @@
 var express = require('express');
-var bodyparser = require('body-parser')
-var orm = require('./modules/orm')
-var rest = require('./modules/rest')
+var bodyparser = require('body-parser');
+var orm = require('./modules/orm');
+var rest = require('./modules/rest');
 
 var app = express();
 var sequelize = orm(process.env.DATABASE_URL);
