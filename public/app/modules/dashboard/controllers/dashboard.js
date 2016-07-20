@@ -16,10 +16,10 @@ function ($rootScope, $scope, $state, $location, apiService, dashboardService, F
     vm.showDetails = true;
     vm.home = {};
 
-    apiService.get('income').then(function(value) {
+    apiService.get('income', {page:3}).then(function(value) {
       vm.home.charts = [
         {
-          data: value,
+          data: value.result,
           title: "Past income",
           options: {}
         }
