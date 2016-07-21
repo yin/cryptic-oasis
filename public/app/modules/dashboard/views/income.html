@@ -20,7 +20,7 @@ Date: 05 Jan 2016
         <div class="col-md-12">
             <!-- The time line -->
             <ul class="timeline">
-                <li ng-repeat="income in incomeHistory">
+                <li ng-repeat="income in vm.incomeHistory">
                     <div class="time-label">
                         <span class="bg-red-gradient">
                             {{ income.createdAt }}
@@ -28,7 +28,7 @@ Date: 05 Jan 2016
                     </div>
                     <div class="timeline-item">
                         <span class="time text-bold">EUR</span>
-                        <h3 class="timeline-header"><a href="http://kmitsolutions.com" target="_blank">{{ income.amount }}</a></h3>
+                        <h3 class="timeline-header"><a href="" target="_blank">{{ income.amount }}</a></h3>
                         <div class="timeline-body">
                             <ul>
                                 <li>In My Shop portfolio</li>      
