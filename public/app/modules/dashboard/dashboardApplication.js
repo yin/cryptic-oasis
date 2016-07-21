@@ -25,6 +25,16 @@ dashboard.config(["$stateProvider", function ($stateProvider) {
         }
     });
 
+    $stateProvider.state('app.income', {
+        url: '/income',
+        templateUrl: 'app/modules/dashboard/views/income.html',
+        controller: 'IncomeController',
+        controllerAs: 'vm',
+        data: {
+            pageTitle: 'Income'
+        }
+    });
+
     /*
     //skills page state
     $stateProvider.state('app.skills', {

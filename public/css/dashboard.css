@@ -10,6 +10,13 @@
  * Core: General Layout Style
  * -------------------------
  */
+
+.clear {
+  clear: both;
+  float: none;
+  height: 1px;
+}
+
 html,
 body {
   min-height: 100%;
@@ -2152,7 +2159,10 @@ a:focus {
   left: 18px;
   top: 0;
 }
-.timeline > .time-label > span {
+.timeline .time-label {
+  margin: auto 15px 15px auto;
+}
+.timeline .time-label > span {
   font-weight: 600;
   padding: 5px;
   display: inline-block;
