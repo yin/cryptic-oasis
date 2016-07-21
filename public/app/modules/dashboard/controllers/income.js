@@ -1,12 +1,6 @@
-﻿/*==========================================================
-    Author      : Ranjithprabhu K
-    Date Created: 13 Jan 2016
-    Description : Controller to handle Education page
-    Change Log
-    s.no      date    author     description     
-
-
- ===========================================================*/
+﻿/**
+ * Controller for Income page
+ */
 
 dashboard.controller("IncomeController", ['$rootScope', '$scope', '$state', '$location', 'dashboardService', 'Flash', 'apiService',
 function ($rootScope, $scope, $state, $location, dashboardService, Flash, apiService) {

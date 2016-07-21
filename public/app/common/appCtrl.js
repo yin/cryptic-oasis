@@ -1,13 +1,4 @@
-﻿/*==========================================================
-    Author      : Ranjithprabhu K
-    Date Created: 24 Dec 2015
-    Description : Controller to handle main application
-    
-    Change Log
-    s.no      date    author     description     
- ===========================================================*/
-
-app.controller("appCtrl", ['$rootScope', '$scope', '$state', '$location', 'Flash','appSettings',
+﻿app.controller("appCtrl", ['$rootScope', '$scope', '$state', '$location', 'Flash','appSettings',
 function ($rootScope, $scope, $state, $location, Flash,appSettings) {
 
     $rootScope.theme = appSettings.theme;
@@ -120,7 +111,13 @@ function ($rootScope, $scope, $state, $location, Flash,appSettings) {
             title: "Income",
             icon: "download",
             state: "income"
+        },
+        {
+            title: "Expense",
+            icon: "upload",
+            state: "expense"
         }
+
         /*
         ,
         {

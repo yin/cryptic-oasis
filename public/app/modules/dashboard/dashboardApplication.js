@@ -1,15 +1,4 @@
-﻿/*==========================================================
-    Author      : Ranjithprabhu K
-    Date Created: 24 Dec 2015
-    Description : Base for Dashboard Application module
-    
-    Change Log
-    s.no      date    author     description     
-    
-
- ===========================================================*/
-
-var dashboard = angular.module('dashboard', ['ui.router', 'ngAnimate', 'ngMaterial']);
+﻿var dashboard = angular.module('dashboard', ['ui.router', 'ngAnimate', 'ngMaterial']);
 
 
 dashboard.config(["$stateProvider", function ($stateProvider) {
@@ -32,6 +21,16 @@ dashboard.config(["$stateProvider", function ($stateProvider) {
         controllerAs: 'vm',
         data: {
             pageTitle: 'Income'
+        }
+    });
+
+    $stateProvider.state('app.expense', {
+        url: '/expense',
+        templateUrl: 'app/modules/dashboard/views/expense.html',
+        controller: 'IncomeController',
+        controllerAs: 'vm',
+        data: {
+            pageTitle: 'Expense'
         }
     });
 

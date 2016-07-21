@@ -1,14 +1,3 @@
-/*==========================================================
-    Author      : Ranjithprabhu K
-    Date Created: 24 Dec 2015
-    Description : main application base
-    
-    Change Log
-    s.no      date    author     description     
-    
-
- ===========================================================*/
-
 var app = angular.module('app', ['ui.router', 'ui.bootstrap', 'ngFlash',
     //main modules
     'login', 'dashboard']);

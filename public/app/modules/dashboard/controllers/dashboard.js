@@ -1,13 +1,6 @@
-﻿/*==========================================================
-    Author      : Ranjithprabhu K
-    Date Created: 13 Jan 2016
-    Description : Controller to handle Home page
-    Change Log
-    s.no      date    author     description     
-
-
- ===========================================================*/
-
+﻿/**
+ * Controller to handle Home page
+ */
 dashboard.controller("HomeController",
   ['$rootScope', '$scope', '$state', '$location', 'apiService', 'dashboardService', 'Flash',
 function ($rootScope, $scope, $state, $location, apiService, dashboardService, Flash) {

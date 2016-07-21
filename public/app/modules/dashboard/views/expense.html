@@ -1,7 +1,7 @@
 ﻿<!-- Content Header (Page header) -->
 <section class="content-header">
     <h1>
-        Income
+        Expenses
     </h1>
     <ol class="breadcrumb">
         <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
@@ -17,7 +17,7 @@
             <ul class="timeline">
                 <li ng-repeat="income in vm.incomeHistory">
                     <div class="time-label">
-                        <span class=" bg-green-gradient text-white"">
+                        <span class="bg-red-gradient">
                             {{ income.createdAt }}
                         </span>
                     </div>
@@ -27,7 +27,7 @@
                         <div class="timeline-body">
                             <ul>
                                 <li>In My Shop portfolio</li>      
-                                <li>Planned income</li>
+                                <li>Recurring expense</li>
                             </ul>
                         </div>
                         <!--

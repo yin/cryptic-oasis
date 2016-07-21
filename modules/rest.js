@@ -1,3 +1,6 @@
+/**
+ * Express.js reouter for a RESTful web service backed by Sequelize.
+ */
 var express = require('express');
 var _ = require('underscore');
 
