@@ -27,7 +27,7 @@ dashboard.config(["$stateProvider", function ($stateProvider) {
     $stateProvider.state('app.expense', {
         url: '/expense',
         templateUrl: 'app/modules/dashboard/views/expense.html',
-        controller: 'IncomeController',
+        controller: 'ExpenseController',
         controllerAs: 'vm',
         data: {
             pageTitle: 'Expense'

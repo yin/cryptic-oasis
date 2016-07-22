@@ -13,7 +13,7 @@ function ($rootScope, $scope, $state, $location, dashboardService, Flash, apiSer
 
     ];
 
-    apiService.get('expense', {page:1}).then(function(value) {
+    apiService.get('expense').then(function(value) {
         console.log("expense-result", value);
         vm.incomeHistory = value.result;
     })
