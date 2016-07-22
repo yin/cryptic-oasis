@@ -7,6 +7,8 @@ var app = express();
 var sequelize = orm(process.env.DATABASE_URL);
 var Income = sequelize.import(__dirname + '/modules/models/income');
 var income_rest = rest(sequelize, Income)
+var Expense = sequelize.import(__dirname + '/modules/models/expense');
+var expense_rest = rest(sequelize, Expense)
 
 console.log(income_rest);
 
@@ -33,6 +35,7 @@ rest.get('/hello', function(request, response) {
 });
 
 rest.use('/income', income_rest);
+rest.use('/expense', expense_rest);
 
 app.use('/', web);
 app.use('/api', rest);
