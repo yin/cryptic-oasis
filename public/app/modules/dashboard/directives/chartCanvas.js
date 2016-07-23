@@ -1,3 +1,5 @@
+'use strict';
+
 dashboard.directive('chart', function() {
 	return {
 		restrict: 'E',
@@ -8,12 +10,16 @@ dashboard.directive('chart', function() {
 		link: {
 			pre: function() {},
 			post: function($scope, ele, attrs) {
-				var canvas = angular.element('canvas');// + $scope.$id);
+				var canvas = ele.find('canvas');
 				ele.css({"display": "block"});
 				canvas.css({"display": "block"});
 
 				if (canvas) {
-					var labels = _.map($scope.chart.data, function(o, k) { return k });
+					var labels = _.map($scope.chart.data, function(o, k) {
+						console.log('labels:', o, k)
+							return moment(o.date).format('DD.MM.');
+					});
+					console.log("all:", labels)
 					var barData = _.map($scope.chart.data, function(datapoint) {
                     	return datapoint.amount
                     });

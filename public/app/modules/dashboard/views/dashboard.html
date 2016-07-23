@@ -10,12 +10,13 @@
     
     <section class="content">
         <div class="row">
-            <div class="col-md-8" style="border-left:1px solid #eee;"
+            <div class="col-md-4 col-sm-12"
+                    style="border-left:1px solid #eee;"
                     data-ng-repeat="chart in vm.home.charts">
                 <p class="text-center">
                     <strong>{{ chart.title }}</strong>
                 </p>
-                    <chart chart="chart"></chart>
+                <chart chart="chart"></chart>
             </div>
         </div>
         <!--

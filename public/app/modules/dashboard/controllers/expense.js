@@ -9,12 +9,15 @@ function ($rootScope, $scope, $state, $location, dashboardService, Flash, apiSer
     vm.mscMarks = false;
     vm.hscMarks = false;
     vm.sslcMarks = false;
-    vm.incomeHistory = [
+    vm.expenseHistory = [
 
     ];
 
-    apiService.get('transactions', {filter:'expense'}).then(function(value) {
-        vm.incomeHistory = value.result;
+    apiService.get('transactions', {filters:'expense'}).then(function(value) {
+        vm.expenseHistory = _.map(value.result, function(item) {
+            item.amount = -Number(item.amount);
+            return item;
+        });
     })
 }]);
 

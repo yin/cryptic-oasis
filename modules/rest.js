@@ -12,18 +12,39 @@ var list_options = {
 	orderBy: 'updatedAt DESC'
 }
 
-function handle_error(error) {
+function param(req, paramName, filter, def) {
+	if (req.query && req.query[paramName]) {
+		if(filter) {
+			return filter(req.query[paramName]);
+		} else {
+			return req.query[paramName];
+		}
+	}
+	return def;
+}
+
+function handle_error(res, status, error) {
+	console.error(error);
+	var status = status || 404;
 	// TODO yin: Add error mapping, for i18n and general UX and other RESTful funcs, like 404
-	return res.json({ success: false, error: error.message });
+	return res.status(status).json({ success: false, error: error.message });
+}
+function error_handler(res, status) {
+	return function(error) {
+		return handle_error(res, status, error)
+	}
 }
 
 function handle_success(res, responseBase, responseResult) {
-	// TODO yin: Add error mapping, for i18n and general UX and other RESTful funcs, like 404
-	return res.json({ success: false, error: error.message });
+	var result = _.extend(responseBase, responseResult);
+	return res.json(result);
 }
 
-module.exports = function(sequelize, type) {
+module.exports = function(sequelize, type, options) {
+	options = options || {};
 	var router = express.Router();
+	var filterProcessor = options.filterProcessor;
+
 
 	function create(req, res) {
 		req.queryInterface.build(req.body, req.queryOptions)
@@ -33,7 +54,7 @@ module.exports = function(sequelize, type) {
 					success: true,
 					result: completed
 				});
-			}).error(handle_error);
+			}).error(error_handler(res));
 	}
 
 	function list(req, res) {
@@ -43,7 +64,7 @@ module.exports = function(sequelize, type) {
 					success: true,
 					result: results
 				});
-			}).catch(handle_error);
+			}).catch(error_handler(res));
 	}
 
 	function update(req, res) {
@@ -53,7 +74,7 @@ module.exports = function(sequelize, type) {
 				return handle_success(res, req.responseBase,
 					{success: false, error: "Operation not implemented"}
 				);
-			}).catch(handle_error);
+			}).catch(error_handler(res));
 	}
 
 	function remove(req, res) {
@@ -63,27 +84,30 @@ module.exports = function(sequelize, type) {
 				return handle_success(res, req.responseBase,
 					{success: false, error: "Operation not implemented"}
 				);
-			}).catch(handle_error);
+			}).catch(error_handler(res));
 	}
 
 	function filters(req, res, next) {
-		if (req.query && req.query.filters)
-			var filters = _.map(req.query.filters.split(','), function(s) {
+		var filters = param(req, 'filters', null, null);
+		if (_.isArray(filters)) {
+			filters = _.map(filters.split(','), function(s) {
 				return s.trim();
 			});
 			if (filterProcessor) {
 				filters = filterProcessor(filters);
 			}
-			if (filters.length) {
-				req.queryInterface = type.scopes(filters);
-			} else {
-				req.queryInterface = type;
-			}
 		}
+		if (!_.isEmpty(filters)) {
+			req.queryInterface = type.scope(filters);
+		} else {
+			req.queryInterface = type;
+		}
+		console.log(filters);
+		next();
 	}
 
 	function count(req, res, next) {
-		type.count().then(function(result) {
+		req.queryInterface.count().then(function(result) {
 			var response = req.responseBase = req.responseBase || {};
 			response = _.extend(response, {
 				count: result
@@ -91,16 +115,16 @@ module.exports = function(sequelize, type) {
 			if (req.query && req.query.count) {
 				return handle_success(res, response, {success: true});
 			} else {
-				req.responseBase = response;
+				req.responseBase = _.extend(req.responseBase, response);
 				next();
 			}
-		}).catch(handle_error);
+		}).catch(error_handler(res));
 	}
 
 	function pagination(req, res, next) {
-		var offset = param(req, 'start', list_options.offset);
-		var limit = param(req, 'limit', list_options.limit);
-		req.responseBase = _.extend(req.responseBase, {
+		var offset = param(req, 'start', Number, list_options.offset);
+		var limit = param(req, 'limit', Number, list_options.limit);
+		req.responseBase = _.extend(req.responseBase||{}, {
 			offset: offset,
 			limit: limit
 		});
@@ -111,11 +135,12 @@ module.exports = function(sequelize, type) {
 		next();
 	}
 
+	router.use(filters);
 	router.use(pagination);
 	router.use(count);
 	router.get('/', list);
 	router.post('/', create);
-	router.update('/:id', list);
+	router.post('/:id', update);
 	router.delete('/:id', create);
 	return router;
 }

@@ -13,8 +13,11 @@ function ($rootScope, $scope, $state, $location, dashboardService, Flash, apiSer
 
     ];
 
-    apiService.get('transactions', {filter:'income'}).then(function(value) {
-        vm.incomeHistory = value.result;
+    apiService.get('transactions', {filters:'income'}).then(function(value) {
+        vm.incomeHistory = _.map(value.result, function(item) {
+            item.amount = Number(item.amount);
+            return item;
+        });
     })
 /*
     vm.lineChartOptions = { scaleShowGridLines: !0, scaleGridLineColor: "rgba(0,0,0,.05)", scaleGridLineWidth: 1, scaleShowHorizontalLines: !0, scaleShowVerticalLines: !0, bezierCurve: !0, bezierCurveTension: .4, pointDot: !0, pointDotRadius: 4, pointDotStrokeWidth: 1, pointHitDetectionRadius: 20, datasetStroke: !0, datasetStrokeWidth: 2, datasetFill: !1, legendTemplate: '<ul class="<%=name.toLowerCase()%>-legend"><% for (var i=0; i<datasets.length; i++){%><li><span style="background-color:<%=datasets[i].strokeColor%>"></span><%if(datasets[i].label){%><%=datasets[i].label%><%}%></li><%}%></ul>' };

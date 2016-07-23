@@ -6,9 +6,18 @@ var initializer = require('./modules/initializer');
 
 var sequelize = orm(process.env.DATABASE_URL);
 var Transaction = sequelize.import(__dirname + '/models/transaction');
-console.log(Transaction)
 initializer.models(sequelize);
-var transaction_rest = rest(sequelize, Transaction);
+var transaction_rest = rest(sequelize, Transaction, {
+	filterProcessor: function(filters) {
+		if (_.isEmpty(filters)) {
+			return 'unscheduled';
+		} else if(_.contains(filters, 'all')) {
+			return null;
+		} else {
+			return filters;
+		}
+	}
+});
 
 var app = express();
 var web = express.Router();

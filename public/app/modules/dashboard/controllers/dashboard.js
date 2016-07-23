@@ -7,16 +7,30 @@ function ($rootScope, $scope, $state, $location, apiService, dashboardService, F
     var vm = this;
 
     vm.showDetails = true;
-    vm.home = {};
+    vm.home = {
+      charts: []
+    };
 
-    apiService.get('transaction', {filter:'income'}).then(function(value) {
-      vm.home.charts = [
-        {
-          data: value.result,
-          title: "Lastest income transactions",
-          options: {}
-        }
-      ]
+    apiService.get('transactions', {filters:'income'}).then(function(value) {
+     vm.home.charts.push({
+        data: _.map(value.result, function(item) {
+            item.amount = Number(item.amount);
+            return item;
+        }),
+        title: "Lastest income",
+        options: {}
+      });
+    });
+
+    apiService.get('transactions', {filters:'expense'}).then(function(value) {
+     vm.home.charts.push({
+        data: _.map(value.result, function(item) {
+            item.amount = -Number(item.amount);
+            return item;
+        }),
+        title: "Lastest expenses",
+        options: {}
+      });
     });
 
     // TODO yin: Present a slide show of features on the Dashboard

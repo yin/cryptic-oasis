@@ -12,27 +12,27 @@ module.exports = function(sequelize, DataTypes) {
     date: {
       type: DataTypes.DATE
     }
-  }, scopes: {
-    income: {
-      where: {
-        amount: { $gt: 0 }
-      }
-    },
-    expense: {
-      where: {
-        amount: {
-          $lt: 0
+  }, {
+    scopes: {
+      income: {
+        where: {
+          amount: { $gt: 0 }
         }
-      }
-    },
-    scheduled: {
-      where: {
-        date: { $ne: null }
-      }
-    },
-    unscheduled: {
-      where: {
-        date: null
+      },
+      expense: {
+        where: {
+          amount: { $lt: 0 }
+        }
+      },
+      scheduled: {
+        where: {
+          date: { $ne: null }
+        }
+      },
+      unscheduled: {
+        where: {
+          date: null
+        }
       }
     }
   }, {
