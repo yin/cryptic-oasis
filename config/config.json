@@ -1,0 +1,32 @@
+{
+  "development": {
+    "username": "youbbrekjcxwci",
+    "password": "t9Av8xoCnCqkIDAN1jyJxtM5Lh",
+    "database": "dcgq17j7lq5it5",
+    "host": "ec2-54-228-226-93.eu-west-1.compute.amazonaws.com",
+    "port": 5432,
+    "native": true,
+    "ssl": true,
+    "dialect": "postgres"
+  },
+  "test": {
+    "username": "youbbrekjcxwci",
+    "password": "t9Av8xoCnCqkIDAN1jyJxtM5Lh",
+    "database": "dcgq17j7lq5it5",
+    "host": "ec2-54-228-226-93.eu-west-1.compute.amazonaws.com",
+    "port": 5432,
+    "native": true,
+    "ssl": true,
+    "dialect": "postgres"
+  },
+  "production": {
+    "username": "youbbrekjcxwci",
+    "password": "t9Av8xoCnCqkIDAN1jyJxtM5Lh",
+    "database": "dcgq17j7lq5it5",
+    "host": "ec2-54-228-226-93.eu-west-1.compute.amazonaws.com",
+    "port": 5432,
+    "native": true,
+    "ssl": true,
+    "dialect": "postgres"
+  }
+}

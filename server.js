@@ -2,16 +2,15 @@ var express = require('express');
 var bodyparser = require('body-parser');
 var orm = require('./modules/orm');
 var rest = require('./modules/rest');
+var initializer = require('./modules/initializer');
+
+var sequelize = orm(process.env.DATABASE_URL);
+var Transaction = sequelize.import(__dirname + '/models/transaction');
+console.log(Transaction)
+initializer.models(sequelize);
+var transaction_rest = rest(sequelize, Transaction);
 
 var app = express();
-var sequelize = orm(process.env.DATABASE_URL);
-var Income = sequelize.import(__dirname + '/modules/models/income');
-var income_rest = rest(sequelize, Income)
-var Expense = sequelize.import(__dirname + '/modules/models/expense');
-var expense_rest = rest(sequelize, Expense)
-
-console.log(income_rest);
-
 var web = express.Router();
 var rest = express.Router();
 
@@ -30,12 +29,12 @@ web.get('/', function(request, response) {
   response.render('pages/index');
 });
 
+
 rest.get('/hello', function(request, response) {
   response.json({ message: "Hello world!" });
 });
 
-rest.use('/income', income_rest);
-rest.use('/expense', expense_rest);
+rest.use('/transactions', transaction_rest);
 
 app.use('/', web);
 app.use('/api', rest);
@@ -43,5 +42,3 @@ app.use('/api', rest);
 app.listen(app.get('port'), function() {
   console.log('Node app is running on port', app.get('port'));
 });
-
-

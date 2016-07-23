@@ -55,6 +55,28 @@ module.exports = function(sequelize, type) {
 		}).catch(handle_error);
 	}
 
+	function update(req, res) {
+		var results = [];
+		var options = _.clone(update_options);
+
+		_.extend(options, req.options || {});
+		options.offset = (options.page - 1) * options.limit;
+
+		type.findOne(options).then(function(results) {
+		}).catch(handle_error);
+	}
+
+	function remove(req, res) {
+		var results = [];
+		var options = _.clone(update_options);
+
+		_.extend(options, req.options || {});
+		options.offset = (options.page - 1) * options.limit;
+
+		type.findOne(options).then(function(results) {
+		}).catch(handle_error);
+	}
+
 	function count(req, res, next) {
 		if (req.query && req.query.count) {
 			type.count().then(function(result) {
