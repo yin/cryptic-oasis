@@ -1,5 +1,5 @@
 /**
- * Express.js reouter for a RESTful web service backed by Sequelize.
+ * Express.js router for a RESTful web service backed by Sequelize.
  */
 var express = require('express');
 var _ = require('underscore');
@@ -17,87 +17,105 @@ function handle_error(error) {
 	return res.json({ success: false, error: error.message });
 }
 
+function handle_success(res, responseBase, responseResult) {
+	// TODO yin: Add error mapping, for i18n and general UX and other RESTful funcs, like 404
+	return res.json({ success: false, error: error.message });
+}
+
 module.exports = function(sequelize, type) {
 	var router = express.Router();
 
 	function create(req, res) {
-		var results = [];
-		var options = _.clone(create_options);
-		_.extend(options, req.options || {});
-
-		console.log(typeof(req.body), req.body);
-		for ( var i in req.body) {
-			console.log(i, req.body[i]);
-		}
-
-		type.build(req.body, options).save().then(function(completed) {
-			return res.json({ success: true, result: completed });
-		}).error(handle_error);
+		req.queryInterface.build(req.body, req.queryOptions)
+			.save()
+			.then(function(completed) {
+				return handle_success(res, {}, {
+					success: true,
+					result: completed
+				});
+			}).error(handle_error);
 	}
 
 	function list(req, res) {
-		var results = [];
-		var options = _.clone(list_options);
-
-		_.extend(options, req.options || {});
-		options.offset = (options.page - 1) * options.limit;
-
-		type.findAll(options).then(function(results) {
-			type.count().then(function(count) {
-				return res.json({
+		req.queryInterface.findAll(req.queryOptions)
+			.then(function(results) {
+				handle_success(res, req.responseBase, {
 					success: true,
-					page: options.page,
-					pageSize: options.limit,
-					total: Math.ceil(count / options.limit),
 					result: results
 				});
-			});
-		}).catch(handle_error);
+			}).catch(handle_error);
 	}
 
 	function update(req, res) {
-		var results = [];
-		var options = _.clone(update_options);
-
-		_.extend(options, req.options || {});
-		options.offset = (options.page - 1) * options.limit;
-
-		type.findOne(options).then(function(results) {
-		}).catch(handle_error);
+		console.log("rest.update:" + req.params.id)
+		req.queryInterface.findOne(req.queryOptions)
+			.then(function(results) {
+				return handle_success(res, req.responseBase,
+					{success: false, error: "Operation not implemented"}
+				);
+			}).catch(handle_error);
 	}
 
 	function remove(req, res) {
-		var results = [];
-		var options = _.clone(update_options);
+		console.log("rest.delete:" + req.params.id)
+		req.queryInterface.findOne(req.queryOptions)
+			.then(function(results) {
+				return handle_success(res, req.responseBase,
+					{success: false, error: "Operation not implemented"}
+				);
+			}).catch(handle_error);
+	}
 
-		_.extend(options, req.options || {});
-		options.offset = (options.page - 1) * options.limit;
-
-		type.findOne(options).then(function(results) {
-		}).catch(handle_error);
+	function filters(req, res, next) {
+		if (req.query && req.query.filters)
+			var filters = _.map(req.query.filters.split(','), function(s) {
+				return s.trim();
+			});
+			if (filterProcessor) {
+				filters = filterProcessor(filters);
+			}
+			if (filters.length) {
+				req.queryInterface = type.scopes(filters);
+			} else {
+				req.queryInterface = type;
+			}
+		}
 	}
 
 	function count(req, res, next) {
-		if (req.query && req.query.count) {
-			type.count().then(function(result) {
-				return res.json({ success: true, count: result });
-			});
-		} else {
-			next();
-		}
+		type.count().then(function(result) {
+			var response = req.responseBase = req.responseBase || {};
+			response = _.extend(response, {
+				count: result
+			})
+			if (req.query && req.query.count) {
+				return handle_success(res, response, {success: true});
+			} else {
+				req.responseBase = response;
+				next();
+			}
+		}).catch(handle_error);
 	}
 
 	function pagination(req, res, next) {
-		if (req.query && req.query.page) {
-			req.options = req.options || {};
-			req.options.page = Number(req.query.page);
-		}
+		var offset = param(req, 'start', list_options.offset);
+		var limit = param(req, 'limit', list_options.limit);
+		req.responseBase = _.extend(req.responseBase, {
+			offset: offset,
+			limit: limit
+		});
+		req.queryOptions = _.extend(req.queryOptions, {
+			start: offset,
+			limit: limit
+		});
 		next();
 	}
 
-	router.use(count);
 	router.use(pagination);
+	router.use(count);
 	router.get('/', list);
 	router.post('/', create);
+	router.update('/:id', list);
+	router.delete('/:id', create);
 	return router;
 }
