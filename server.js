@@ -2,21 +2,14 @@ var express = require('express');
 var bodyparser = require('body-parser');
 var orm = require('./modules/orm');
 var rest = require('./modules/rest');
+var filterProcessors = require('./modules/rest/filterProcessors');
 var initializer = require('./modules/initializer');
-
+console.log(filterProcessors)
 var sequelize = orm(process.env.DATABASE_URL);
 var Transaction = sequelize.import(__dirname + '/models/transaction');
 initializer.models(sequelize);
 var transaction_rest = rest(sequelize, Transaction, {
-	filterProcessor: function(filters) {
-		if (_.isEmpty(filters)) {
-			return 'unscheduled';
-		} else if(_.contains(filters, 'all')) {
-			return null;
-		} else {
-			return filters;
-		}
-	}
+	filterProcessor: filterProcessors.transactions
 });
 
 var app = express();

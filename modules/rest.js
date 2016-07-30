@@ -8,8 +8,8 @@ var create_options = {
 }
 var list_options = {
 	limit: 20,
-	page: 1,
-	orderBy: 'updatedAt DESC'
+	start: 0,
+	order: 'date DESC'
 }
 
 function param(req, paramName, filter, def) {
@@ -24,7 +24,7 @@ function param(req, paramName, filter, def) {
 }
 
 function handle_error(res, status, error) {
-	console.error(error);
+	console.error('sequelize error: ', error);
 	var status = status || 404;
 	// TODO yin: Add error mapping, for i18n and general UX and other RESTful funcs, like 404
 	return res.status(status).json({ success: false, error: error.message });
@@ -68,7 +68,6 @@ module.exports = function(sequelize, type, options) {
 	}
 
 	function update(req, res) {
-		console.log("rest.update:" + req.params.id)
 		req.queryInterface.findOne(req.queryOptions)
 			.then(function(results) {
 				return handle_success(res, req.responseBase,
@@ -78,7 +77,6 @@ module.exports = function(sequelize, type, options) {
 	}
 
 	function remove(req, res) {
-		console.log("rest.delete:" + req.params.id)
 		req.queryInterface.findOne(req.queryOptions)
 			.then(function(results) {
 				return handle_success(res, req.responseBase,
@@ -88,13 +86,17 @@ module.exports = function(sequelize, type, options) {
 	}
 
 	function filters(req, res, next) {
-		var filters = param(req, 'filters', null, null);
-		if (_.isArray(filters)) {
-			filters = _.map(filters.split(','), function(s) {
-				return s.trim();
-			});
-			if (filterProcessor) {
-				filters = filterProcessor(filters);
+		var filtersParam = param(req, 'filters', null, null);
+		var filters;
+		if (filtersParam) {
+			filters = filtersParam.split(',');
+			if (_.isArray(filters)) {
+				filters = _.map(filters, function(s) {
+					return s.trim();
+				});
+				if (filterProcessor) {
+					filters = filterProcessor(filters);
+				}
 			}
 		}
 		if (!_.isEmpty(filters)) {
@@ -102,7 +104,6 @@ module.exports = function(sequelize, type, options) {
 		} else {
 			req.queryInterface = type;
 		}
-		console.log(filters);
 		next();
 	}
 
@@ -122,15 +123,18 @@ module.exports = function(sequelize, type, options) {
 	}
 
 	function pagination(req, res, next) {
-		var offset = param(req, 'start', Number, list_options.offset);
+		var start = param(req, 'start', Number, list_options.start);
 		var limit = param(req, 'limit', Number, list_options.limit);
+		var order = param(req, 'order', Number, list_options.order);
 		req.responseBase = _.extend(req.responseBase||{}, {
-			offset: offset,
-			limit: limit
+			start: start,
+			limit: limit,
+			order: order
 		});
-		req.queryOptions = _.extend(req.queryOptions, {
-			start: offset,
-			limit: limit
+		req.queryOptions = _.extend(req.queryOptions||{}, {
+			offset: start,
+			limit: limit,
+			orderBy: order
 		});
 		next();
 	}
