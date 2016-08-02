@@ -9,7 +9,7 @@
   },
   "main": "server.js",
   "scripts": {
-    "start": "node server.js",
+    "start": "node ./node_modules/nodemon/bin/nodemon.js server.js",
     "prestart": "npm install",
     "postinstall": "(command -v bower || npm install -g bower); bower install",
     "test": "node node_modules/karma/bin/karma start test/karma.conf.js",
