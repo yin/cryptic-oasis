@@ -4,13 +4,7 @@
 var express = require('express');
 var _ = require('underscore');
 
-var create_options = {
-}
-var list_options = {
-	limit: 20,
-	start: 0,
-	order: 'date DESC'
-}
+var debug = true;
 
 function param(req, paramName, filter, def) {
 	if (req.query && req.query[paramName]) {
@@ -24,7 +18,7 @@ function param(req, paramName, filter, def) {
 }
 
 function handle_error(res, status, error) {
-	console.error('sequelize error: ', error);
+	console.error('rest error: ', error);
 	var status = status || 404;
 	// TODO yin: Add error mapping, for i18n and general UX and other RESTful funcs, like 404
 	return res.status(status).json({ success: false, error: error.message });
@@ -44,9 +38,29 @@ module.exports = function(sequelize, type, options) {
 	options = options || {};
 	var router = express.Router();
 	var filterProcessor = options.filterProcessor;
+	var responseFields = options.responseFileds;
+	var requestFields = options.requestFields;
 
+	var create_options = {};
+	var update_options = {};
+	var delete_options = {};
+	var list_options = {
+		limit: 20,
+		start: 0,
+		order: 'date DESC'
+	}
+	var get_options = {};
+	if (_.isArray(requestFields)) { 
+		_.extend(create_options, { fileds: requestFields });
+		_.extend(update_options, { fileds: requestFields });
+	}
+	if (_.isArray(responseFields)) { 
+		_.extend(list_options, { fileds: requestFields });
+		_.extend(get_options, { fileds: requestFields });
+	}
 
 	function create(req, res) {
+		if (debug) console.log("create: ", JSON.stringify(req.body));
 		req.queryInterface.build(req.body, req.queryOptions)
 			.save()
 			.then(function(completed) {
@@ -58,6 +72,7 @@ module.exports = function(sequelize, type, options) {
 	}
 
 	function list(req, res) {
+		if (debug) console.log("list: ", JSON.stringify(req.body));
 		req.queryInterface.findAll(req.queryOptions)
 			.then(function(results) {
 				handle_success(res, req.responseBase, {
@@ -67,22 +82,63 @@ module.exports = function(sequelize, type, options) {
 			}).catch(error_handler(res));
 	}
 
+	function get(req, res) {
+		if (debug) console.log("list: ", JSON.stringify(req.body));
+		var id = Number(req.params.id);
+		if (id && !isNaN(id)) {
+			req.queryInterface.findById(id)
+				.then(function(result) {
+					handle_success(res, req.responseBase, {
+						success: true,
+						result: result
+					});
+				}).catch(error_handler(res));
+		} else {
+			handle_error(req, 400, "Wrong object ID parameter in request")
+		}
+	}
+
 	function update(req, res) {
-		req.queryInterface.findOne(req.queryOptions)
-			.then(function(results) {
-				return handle_success(res, req.responseBase,
-					{success: false, error: "Operation not implemented"}
-				);
+		if (debug) console.log("update: ", JSON.stringify(req.body));
+		var id = Number(req.params.id);
+		if (id && !isNaN(id)) {
+			req.queryInterface.findById(id)
+				.then(function(result) { performUpdate(req, res, result) })
+				.catch(error_handler(res));
+		} else {
+			handle_error(req, 400, "Wrong object ID parameter in request")
+		}
+	}
+
+	function performUpdate(req, res, instance) {
+		var options = req.queryOptions;
+		var data = _.extend(_.clone(instance.get({plain:true})), req.body);
+		options.fileds = _.intersection(options.fileds, _.keys(data));
+		data.id = instance.id;
+		instance.update(data, options)
+			.then(function() {
+				handle_success(res, req.responseBase, {
+					success: true,
+					id: data.id
+				});
 			}).catch(error_handler(res));
 	}
 
 	function remove(req, res) {
-		req.queryInterface.findOne(req.queryOptions)
-			.then(function(results) {
-				return handle_success(res, req.responseBase,
-					{success: false, error: "Operation not implemented"}
-				);
-			}).catch(error_handler(res));
+		var id = Number(req.params.id);
+		if (id && !isNaN(id)) {
+			req.queryInterface.findById(id)
+				.then(function(result) {
+					return result.destroy();
+				}).then(function() {
+					handle_success(res, req.responseBase, {
+						success: true,
+						id: id
+					});
+				}).catch(error_handler(res));
+		} else {
+			handle_error(req, 400, "Wrong object ID parameter in request")
+		}
 	}
 
 	function filters(req, res, next) {
@@ -108,6 +164,7 @@ module.exports = function(sequelize, type, options) {
 	}
 
 	function count(req, res, next) {
+		// TODO yin: count is required by list only, use findAndCount() instead
 		req.queryInterface.count().then(function(result) {
 			var response = req.responseBase = req.responseBase || {};
 			response = _.extend(response, {
@@ -143,8 +200,9 @@ module.exports = function(sequelize, type, options) {
 	router.use(pagination);
 	router.use(count);
 	router.get('/', list);
+	router.get('/:id', get);
 	router.post('/', create);
 	router.post('/:id', update);
-	router.delete('/:id', create);
+	router.delete('/:id', remove);
 	return router;
 }
